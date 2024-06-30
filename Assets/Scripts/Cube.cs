@@ -37,9 +37,11 @@ public class Cube : MonoBehaviour
     IEnumerator MoveCube(Vector2 joyStickDir)
     {
 
-        yield return StartCoroutine(CameraController.instance.ResetMapRotation());
+        yield return CameraController.instance.StartCoroutine(CameraController.instance.ResetMapRotation());
 
-        if (CubeController.instance.CheckBlocked(joyStickDir))
+        CubeController.instance.RoundCubesPos();
+
+        if (CubeController.instance.CheckBlocked(cubeNum, joyStickDir))
         {
             CubeController.instance.RoundCubesPos();
             CubeController.instance.cubeMoving = false;
@@ -50,7 +52,7 @@ public class Cube : MonoBehaviour
         //CubeController.instance.RoundCubesPos();
         Transform rotateAxis = null;
 
-        if (!CubeController.instance.CheckUp(joyStickDir))
+        if (!CubeController.instance.CheckUp(cubeNum, joyStickDir))
         {
             for (int i = 0; i < axis.Length; i++)
             {
@@ -122,7 +124,7 @@ public class Cube : MonoBehaviour
         CubeController.instance.RoundCubesPos();
 
         if (transform.position == new Vector3(-2, 0.5f, 2))
-            if (!CubeController.instance.CheckUp(new Vector2(1, 0)))
+            if (!CubeController.instance.CheckUp(cubeNum, new Vector2(1, 0)))
                 yield return StartCoroutine(PushCube());
 
         CubeController.instance.cubeMoving = false;

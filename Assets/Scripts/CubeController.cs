@@ -172,6 +172,20 @@ public class CubeController : MonoBehaviour
                 }
         return up;
     }
+    public bool CheckUp(int cubeNum, Vector2 joyStickDir)
+    {
+        bool up = false;
+        for (int i = 0; i < allCubes.Length; i++)
+            if (i != cubeNum)
+                if (Mathf.Abs(allCubes[i].transform.position.x - (allCubes[cubeNum].transform.position.x + joyStickDir.x)) < 0.2f
+                && Mathf.Abs(allCubes[i].transform.position.y - allCubes[cubeNum].transform.position.y) < 0.2f
+                && Mathf.Abs(allCubes[i].transform.position.z - (allCubes[cubeNum].transform.position.z + joyStickDir.y)) < 0.2f)
+                {
+                    up = true;
+                    break;
+                }
+        return up;
+    }
 
     public bool CheckBlocked(Vector2 joyStickDir)
     {
@@ -181,11 +195,22 @@ public class CubeController : MonoBehaviour
             blocked = true;
         return blocked;
     }
+    public bool CheckBlocked(int cubeNum, Vector2 joyStickDir)
+    {
+        bool blocked = false;
+        if (Mathf.Abs(allCubes[cubeNum].transform.position.x + joyStickDir.x) > 2.5f
+                        || Mathf.Abs(allCubes[cubeNum].transform.position.z + joyStickDir.y) > 2.5f)
+            blocked = true;
+        return blocked;
+    }
 
     public void StartMixCubes()
     {
         if (!cubeMixing)
             StartCoroutine(MixCubes());
+
+        if (MenuManager.instance.menuAnimator.GetBool("appear"))
+            MenuManager.instance.menuAnimator.SetBool("appear", false);
     }
     public IEnumerator MixCubes()
     {
@@ -216,6 +241,7 @@ public class CubeController : MonoBehaviour
         controlTarget = -1;*/
         cubeMixing = false;
     }
+    /*
     IEnumerator MixCube(Cube cube, int mixDir)
     {
         yield return StartCoroutine(CameraController.instance.ResetMapRotation());
@@ -308,5 +334,5 @@ public class CubeController : MonoBehaviour
 
         //GetComponent<Rigidbody>().freezeRotation = true;
         RoundCubesPos();
-    }
+    }*/
 }

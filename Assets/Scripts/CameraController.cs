@@ -16,6 +16,7 @@ public class CameraController : MonoBehaviour
     public float zoomSpeed;
     Transform cam;
 
+    bool drag = false;
     Vector2 prevPos = Vector2.zero;
     float prevDistance = 0f;
 
@@ -30,7 +31,12 @@ public class CameraController : MonoBehaviour
         cam = vcam.transform;
     }
 
-    public void OnDrag()
+    private void FixedUpdate()
+    {
+        if (drag) OnDrag();
+    }
+
+    private void OnDrag()
     {
         int touchCount = Input.touchCount;
         //Debug.Log(Input.touchCount);
@@ -48,9 +54,9 @@ public class CameraController : MonoBehaviour
             //cam.position -= vec * moveSpeed * Time.deltaTime;
             if (!CubeController.instance.cubeMoving && !CubeController.instance.cubeMixing)
                 if (dir.x < 0)
-                    map.Rotate(mapPlane.up * moveSpeed * gap * Time.deltaTime);
+                    map.Rotate(mapPlane.up * moveSpeed * gap * Time.fixedDeltaTime);
                 else if (dir.x > 0)
-                    map.Rotate(-mapPlane.up * moveSpeed * gap * Time.deltaTime);
+                    map.Rotate(-mapPlane.up * moveSpeed * gap * Time.fixedDeltaTime);
 
             prevPos = Input.GetTouch(0).position;
         }
@@ -71,16 +77,23 @@ public class CameraController : MonoBehaviour
             if (beforePosDistance > currentPosDistance)
             {
                 if (cam.position.y < 15)
-                    cam.position += -cam.forward * zoomSize * Time.deltaTime;
+                    cam.position += -cam.forward * zoomSize * Time.fixedDeltaTime;
             }
             else if (beforePosDistance < currentPosDistance)
                 if (cam.position.y > 2)
-                    cam.position += cam.forward * zoomSize * Time.deltaTime;
+                    cam.position += cam.forward * zoomSize * Time.fixedDeltaTime;
+            if (cam.position.y < 2)
+                cam.position = new Vector3(-2.783301e-09f, 2.018785f, -2.603629f);
         }
-    }
 
+    }
+    public void BeginDrag()
+    {
+        drag = true;
+    }
     public void ExitDrag()
     {
+        drag = false;
         prevPos = Vector2.zero;
         prevDistance = 0f;
     }
