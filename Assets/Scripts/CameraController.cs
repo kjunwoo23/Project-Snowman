@@ -46,10 +46,11 @@ public class CameraController : MonoBehaviour
             Vector3 vec = new Vector3(dir.x, 0, dir.y);
 
             //cam.position -= vec * moveSpeed * Time.deltaTime;
-            if (dir.x < 0)
-                map.Rotate(mapPlane.up * moveSpeed * gap * Time.deltaTime);
-            else if (dir.x > 0)
-                map.Rotate(-mapPlane.up * moveSpeed * gap * Time.deltaTime);
+            if (!CubeController.instance.cubeMoving && !CubeController.instance.cubeMixing)
+                if (dir.x < 0)
+                    map.Rotate(mapPlane.up * moveSpeed * gap * Time.deltaTime);
+                else if (dir.x > 0)
+                    map.Rotate(-mapPlane.up * moveSpeed * gap * Time.deltaTime);
 
             prevPos = Input.GetTouch(0).position;
         }
@@ -68,9 +69,12 @@ public class CameraController : MonoBehaviour
 
 
             if (beforePosDistance > currentPosDistance)
-                cam.position += -cam.forward * zoomSize * Time.deltaTime;
+            {
+                if (cam.position.y < 15)
+                    cam.position += -cam.forward * zoomSize * Time.deltaTime;
+            }
             else if (beforePosDistance < currentPosDistance)
-                if ((cam.position - vcam.LookAt.position).magnitude > 2f)
+                if (cam.position.y > 2)
                     cam.position += cam.forward * zoomSize * Time.deltaTime;
         }
     }
@@ -88,13 +92,13 @@ public class CameraController : MonoBehaviour
         if (map.rotation.y > 0.05f)
             while (map.rotation.y > 0.05f)
             {
-                map.Rotate(-mapPlane.up * moveSpeed * Time.fixedDeltaTime);
+                map.Rotate(-mapPlane.up * moveSpeed * 5 * Time.fixedDeltaTime);
                 yield return new WaitForFixedUpdate();
             }
         else if (map.rotation.y < -0.05f)
             while (map.rotation.y < -0.05f)
             {
-                map.Rotate(mapPlane.up * moveSpeed * Time.fixedDeltaTime);
+                map.Rotate(mapPlane.up * moveSpeed * 5 * Time.fixedDeltaTime);
                 yield return new WaitForFixedUpdate();
             }
         map.rotation = Quaternion.Euler(0, 0, 0);

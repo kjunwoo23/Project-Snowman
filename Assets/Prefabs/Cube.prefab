@@ -948,6 +948,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5894a7e9ae24344fa59eb9bbe3c408a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cubeNum: 0
   axis:
   - {fileID: 3069621330708143591}
   - {fileID: 6768033645191218850}

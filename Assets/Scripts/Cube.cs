@@ -23,62 +23,121 @@ public class Cube : MonoBehaviour
     public void FocusMe()
     {
         focused = true;
+
         CubeController.instance.controlTarget = cubeNum;
         CameraController.instance.vcam.LookAt = transform;
+        CubeController.instance.joystick.gameObject.SetActive(true);
     }
 
-    public void StartMoveCube(Vector2 joyStickDir, bool up)
+    public void StartMoveCube(Vector2 joyStickDir)
     {
         //Debug.Log(joyStickDir);
-        if (!up)
-            StartCoroutine(MoveCube(joyStickDir));
-        else
-            StartCoroutine(MoveCubeUp(joyStickDir));
+        StartCoroutine(MoveCube(joyStickDir));
     }
-    IEnumerator MoveCube(Vector2 realDir)
+    IEnumerator MoveCube(Vector2 joyStickDir)
     {
+
         yield return StartCoroutine(CameraController.instance.ResetMapRotation());
+
+        if (CubeController.instance.CheckBlocked(joyStickDir))
+        {
+            CubeController.instance.RoundCubesPos();
+            CubeController.instance.cubeMoving = false;
+            yield break;
+        }
+
+
         //CubeController.instance.RoundCubesPos();
         Transform rotateAxis = null;
-        for (int i = 0; i < axis.Length; i++)
+
+        if (!CubeController.instance.CheckUp(joyStickDir))
         {
-            if (axis[i].transform.position.y < transform.position.y - 0.25f)
-                if (Mathf.Abs(axis[i].transform.position.x - (transform.position.x + realDir.x * 0.5f)) < 0.5f)
-                    if (Mathf.Abs(axis[i].transform.position.z - (transform.position.z + realDir.y * 0.5f)) < 0.5f)
-                    {
-                        rotateAxis = axis[i];
-                        break;
-                    }
+            for (int i = 0; i < axis.Length; i++)
+            {
+                if (axis[i].transform.position.y < transform.position.y - 0.25f)
+                    if (Mathf.Abs(axis[i].transform.position.x - (transform.position.x + joyStickDir.x * 0.5f)) < 0.1f)
+                        if (Mathf.Abs(axis[i].transform.position.z - (transform.position.z + joyStickDir.y * 0.5f)) < 0.1f)
+                        {
+                            rotateAxis = axis[i];
+                            break;
+                        }
+            }
+            //GetComponent<Rigidbody>().freezeRotation = false;
+            while (transform.position.y >= 0.5f)
+            {
+                if (joyStickDir.x < 0)
+                    transform.RotateAround(rotateAxis.position, CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.x > 0)
+                    transform.RotateAround(rotateAxis.position, -CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.y < 0)
+                    transform.RotateAround(rotateAxis.position, -CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.y > 0)
+                    transform.RotateAround(rotateAxis.position, CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
+                //Debug.Log(transform.rotation.x);
+                yield return new WaitForFixedUpdate();
+            }
         }
-        //GetComponent<Rigidbody>().freezeRotation = false;
-        while (transform.position.y >= 0.5f)
+        else
         {
-            if (realDir.x < 0)
-                transform.RotateAround(rotateAxis.position, CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
-            else if (realDir.x > 0)
-                transform.RotateAround(rotateAxis.position, -CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
-            else if (realDir.y < 0)
-                transform.RotateAround(rotateAxis.position, -CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
-            else if (realDir.y > 0)
-                transform.RotateAround(rotateAxis.position, CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
-            //Debug.Log(transform.rotation.x);
-            yield return new WaitForFixedUpdate();
+            for (int i = 0; i < axis.Length; i++)
+            {
+                if (axis[i].transform.position.y > transform.position.y + 0.25f)
+                    if (Mathf.Abs(axis[i].transform.position.x - (transform.position.x + joyStickDir.x * 0.5f)) < 0.1f)
+                        if (Mathf.Abs(axis[i].transform.position.z - (transform.position.z + joyStickDir.y * 0.5f)) < 0.1f)
+                        {
+                            rotateAxis = axis[i];
+                            break;
+                        }
+            }
+            //GetComponent<Rigidbody>().freezeRotation = false;
+            while (transform.position.y <= 1.5f)
+            {
+                if (joyStickDir.x < 0)
+                    transform.RotateAround(rotateAxis.position, CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.x > 0)
+                    transform.RotateAround(rotateAxis.position, -CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.y < 0)
+                    transform.RotateAround(rotateAxis.position, -CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.y > 0)
+                    transform.RotateAround(rotateAxis.position, CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
+                //Debug.Log(transform.rotation.x);
+                yield return new WaitForFixedUpdate();
+            }
+            while (transform.position.y >= 1.5f)
+            {
+                if (joyStickDir.x < 0)
+                    transform.RotateAround(rotateAxis.position, CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.x > 0)
+                    transform.RotateAround(rotateAxis.position, -CameraController.instance.map.forward, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.y < 0)
+                    transform.RotateAround(rotateAxis.position, -CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
+                else if (joyStickDir.y > 0)
+                    transform.RotateAround(rotateAxis.position, CameraController.instance.map.right, moveSpeed * Time.fixedDeltaTime);
+                //Debug.Log(transform.rotation.x);
+                yield return new WaitForFixedUpdate();
+            }
         }
 
         //GetComponent<Rigidbody>().freezeRotation = true;
         CubeController.instance.RoundCubesPos();
+
+        if (transform.position == new Vector3(-2, 0.5f, 2))
+            if (!CubeController.instance.CheckUp(new Vector2(1, 0)))
+                yield return StartCoroutine(PushCube());
+
         CubeController.instance.cubeMoving = false;
     }
-    IEnumerator MoveCubeUp(Vector2 realDir)
+    /*IEnumerator MoveCubeUp(Vector2 realDir)
     {
         yield return StartCoroutine(CameraController.instance.ResetMapRotation());
+
         //CubeController.instance.RoundCubesPos();
         Transform rotateAxis = null;
         for (int i = 0; i < axis.Length; i++)
         {
             if (axis[i].transform.position.y > transform.position.y + 0.25f)
-                if (Mathf.Abs(axis[i].transform.position.x - (transform.position.x + realDir.x * 0.5f)) < 0.5f)
-                    if (Mathf.Abs(axis[i].transform.position.z - (transform.position.z + realDir.y * 0.5f)) < 0.5f)
+                if (Mathf.Abs(axis[i].transform.position.x - (transform.position.x + realDir.x * 0.5f)) < 0.1f)
+                    if (Mathf.Abs(axis[i].transform.position.z - (transform.position.z + realDir.y * 0.5f)) < 0.1f)
                     {
                         rotateAxis = axis[i];
                         break;
@@ -115,5 +174,15 @@ public class Cube : MonoBehaviour
         //GetComponent<Rigidbody>().freezeRotation = true;
         CubeController.instance.RoundCubesPos();
         CubeController.instance.cubeMoving = false;
+    }*/
+
+    IEnumerator PushCube()
+    {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        GetComponent<Rigidbody>().AddForce(400, 0, 0);
+        while (transform.position.x < -1) yield return null;
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        GetComponent<Rigidbody>().velocity *= 0;
+        CubeController.instance.RoundCubesPos();
     }
 }
