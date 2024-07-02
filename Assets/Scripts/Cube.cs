@@ -180,7 +180,8 @@ public class Cube : MonoBehaviour
 
     IEnumerator PushCube()
     {
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionZ
+            | RigidbodyConstraints.FreezeRotation;
         GetComponent<Rigidbody>().AddForce(400, 0, 0);
         while (transform.position.x < -1) yield return null;
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;

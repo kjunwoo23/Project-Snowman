@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CubeController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class CubeController : MonoBehaviour
     public float mixSpeed;
     public VariableJoystick joystick;
 
+    public Image joystickImage;
 
     RaycastHit hit;
     float focusChangeCool;
@@ -35,11 +37,18 @@ public class CubeController : MonoBehaviour
             focusChangeCool -= Time.deltaTime;
 
         //if (Input.GetKeyDown(KeyCode.R))
-            //StartMixCubes();
+        //StartMixCubes();
+
+        //if (Input.touchCount != 0)
+          //Debug.Log(Input.GetTouch(0).position.y);
+        //Debug.DrawRay(Input.GetTouch(0).position, CameraController.instance.map.right * 1000, Color.green);
+        //Debug.DrawRay(new Vector3(joystickImage.rectTransform.position.x, joystickImage.rectTransform.position.y + joystickImage.rectTransform.rect.height), CameraController.instance.map.right * 1000, Color.red);
+        //Debug.DrawRay(new Vector3(joystickImage.rectTransform.position.x, Screen.height * 0.4f), CameraController.instance.map.right * 1000, Color.blue);
 
         if (focusChangeCool < 0)
-            if (Input.touchCount == 1)
+            if (Input.touchCount == 1 && !CameraController.instance.drag && Input.GetTouch(0).position.y > Screen.height * 0.4f)
             {
+                //Debug.Log(Input.GetTouch(0).position.y + ", " + joystickImage.rectTransform.rect.height);
                 Vector3 touchPos = Input.GetTouch(0).position;
                 touchPos.z = Camera.main.nearClipPlane;
                 Vector3 worldPos = Camera.main.ScreenToWorldPoint(touchPos);

@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
     public float zoomSpeed;
     Transform cam;
 
-    bool drag = false;
+    public bool drag = false;
     Vector2 prevPos = Vector2.zero;
     float prevDistance = 0f;
 
@@ -84,6 +84,8 @@ public class CameraController : MonoBehaviour
                     cam.position += cam.forward * zoomSize * Time.fixedDeltaTime;
             if (cam.position.y < 2)
                 cam.position = new Vector3(-2.783301e-09f, 2.018785f, -2.603629f);
+            if (cam.position.y > 15)
+                cam.position = new Vector3(-2.657628e-08f, 15.00206f, -24.86067f);
         }
 
     }
@@ -101,19 +103,32 @@ public class CameraController : MonoBehaviour
     public IEnumerator ResetMapRotation()
     {
         //vcam.transform.position = new Vector3(0, 4, -6);
-        //Debug.Log(map.rotation.y);
-        if (map.rotation.y > 0.05f)
+
+        float speedRatio = 1;
+        //if (map.eulerAngles.y > 90)
+        //speedRatio = map.eulerAngles.y / 90f;
+
+        //Debug.Log(map.eulerAngles.y);
+
+        if (map.eulerAngles.y < 180f)
+        {
+            map.rotation = Quaternion.Euler(map.eulerAngles);
             while (map.rotation.y > 0.05f)
             {
-                map.Rotate(-mapPlane.up * moveSpeed * 5 * Time.fixedDeltaTime);
+                map.Rotate(-mapPlane.up * moveSpeed * 5 * speedRatio * Time.fixedDeltaTime);
                 yield return new WaitForFixedUpdate();
             }
-        else if (map.rotation.y < -0.05f)
-            while (map.rotation.y < -0.05f)
+        }
+        else if (map.eulerAngles.y > 180f)
+        {
+            map.rotation = Quaternion.Euler(map.eulerAngles);
+            //Debug.Log(map.rotation.y);
+            while (map.rotation.y > 0.05f)
             {
-                map.Rotate(mapPlane.up * moveSpeed * 5 * Time.fixedDeltaTime);
+                map.Rotate(mapPlane.up * moveSpeed * 5 * speedRatio * Time.fixedDeltaTime);
                 yield return new WaitForFixedUpdate();
             }
+        }
         map.rotation = Quaternion.Euler(0, 0, 0);
     }
 }
