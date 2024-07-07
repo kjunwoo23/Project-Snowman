@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - Cube
-  - 
+  - PushTutorial
   - 
   - 
   - 
@@ -40,4 +40,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: WorldUI
+    uniqueID: 2163252429
     locked: 0

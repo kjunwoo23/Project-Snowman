@@ -16,6 +16,7 @@ public class SkinManager : MonoBehaviour
     public Material lit;
 
     public MeshRenderer[] cubeMeshes;
+    int curSkin;
 
     private void Awake()
     {
@@ -24,7 +25,9 @@ public class SkinManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        if (PlayerPrefs.HasKey("Skin"))
+            curSkin = PlayerPrefs.GetInt("Skin");
+        ChangeSkin(curSkin);
     }
 
     // Update is called once per frame
@@ -35,6 +38,8 @@ public class SkinManager : MonoBehaviour
 
     public void ChangeSkin(int i)
     {
+        curSkin = i;
+        PlayerPrefs.SetInt("Skin", curSkin);
         cubeMeshes[0].materials = new Material[2] { lit, skins[i].body };
         cubeMeshes[1].materials = new Material[2] { lit, skins[i].head };
     }

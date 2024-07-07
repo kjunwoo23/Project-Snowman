@@ -104,7 +104,7 @@ public class CameraController : MonoBehaviour
     {
         //vcam.transform.position = new Vector3(0, 4, -6);
 
-        float speedRatio = 1;
+        float speedRatio = 3;
         //if (map.eulerAngles.y > 90)
         //speedRatio = map.eulerAngles.y / 90f;
 

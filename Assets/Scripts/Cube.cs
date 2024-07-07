@@ -127,6 +127,28 @@ public class Cube : MonoBehaviour
             if (!CubeController.instance.CheckUp(cubeNum, new Vector2(1, 0)))
                 yield return StartCoroutine(PushCube());
 
+        if (!CubeController.instance.cleared)
+        {
+            bool failed = false;
+
+            for (int i = 0; i < CubeController.instance.allCubes.Length; i++)
+            {
+
+                //Debug.Log(CubeController.instance.allCubes[i].transform.forward + ", " + CubeController.instance.allCubes[i].transform.up);
+                if ((CubeController.instance.allCubes[i].transform.forward != CameraController.instance.map.forward)
+                    || (CubeController.instance.allCubes[i].transform.up != CameraController.instance.map.up)
+                    || (i > 0 && CubeController.instance.allCubes[i].transform.position.y <= CubeController.instance.allCubes[i - 1].transform.position.y))
+                {
+                    failed = true;
+                    break;
+                }
+            }
+            //Debug.Log(failed);
+            if (!failed)
+            {
+                CubeController.instance.PuzzleCleared();
+            }
+        }
         CubeController.instance.cubeMoving = false;
     }
     /*IEnumerator MoveCubeUp(Vector2 realDir)
@@ -183,7 +205,8 @@ public class Cube : MonoBehaviour
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionZ
             | RigidbodyConstraints.FreezeRotation;
         GetComponent<Rigidbody>().AddForce(400, 0, 0);
-        while (transform.position.x < -1) yield return null;
+        while (transform.position.x < -1.5f) yield return null;
+        while (transform.position.x < -1 && GetComponent<Rigidbody>().velocity.x > 0.05f) yield return null;
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         GetComponent<Rigidbody>().velocity *= 0;
         CubeController.instance.RoundCubesPos();

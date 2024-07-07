@@ -33,6 +33,7 @@ public class MenuManager : MonoBehaviour
     }
     public void OnClickElse()
     {
-        menuAnimator.SetBool("appear", false);
+        if (menuAnimator.GetBool("appear"))
+            menuAnimator.SetBool("appear", false);
     }
 }

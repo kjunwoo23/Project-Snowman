@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CubeController : MonoBehaviour
 {
@@ -18,7 +19,11 @@ public class CubeController : MonoBehaviour
 
     RaycastHit hit;
     float focusChangeCool;
+    public bool cleared;
+    bool failed;
 
+    public Animator clearScoreAnimator;
+    public TextMeshProUGUI clearScore;
 
     private void Awake()
     {
@@ -27,7 +32,7 @@ public class CubeController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        cleared = true;
     }
 
     // Update is called once per frame
@@ -46,7 +51,7 @@ public class CubeController : MonoBehaviour
         //Debug.DrawRay(new Vector3(joystickImage.rectTransform.position.x, Screen.height * 0.4f), CameraController.instance.map.right * 1000, Color.blue);
 
         if (focusChangeCool < 0)
-            if (Input.touchCount == 1 && !CameraController.instance.drag && Input.GetTouch(0).position.y > Screen.height * 0.4f)
+            if (Input.touchCount == 1 && !CameraController.instance.drag && Input.GetTouch(0).position.y > Screen.height * 0.3f)
             {
                 //Debug.Log(Input.GetTouch(0).position.y + ", " + joystickImage.rectTransform.rect.height);
                 Vector3 touchPos = Input.GetTouch(0).position;
@@ -59,6 +64,17 @@ public class CubeController : MonoBehaviour
                     Debug.DrawRay(worldPos, (worldPos - CameraController.instance.vcam.transform.position).normalized * hit.distance, Color.red);
                     if (controlTarget != -1) allCubes[controlTarget].focused = false;
                     hit.collider.GetComponent<Cube>().FocusMe();
+                    focusChangeCool = 0.3f;
+                }
+                else if (Physics.Raycast(worldPos, (worldPos - CameraController.instance.vcam.transform.position).normalized, out hit, 999, LayerMask.GetMask("PushTutorial")))
+                {
+                    //Debug.Log(touchPos + ", " + worldPos);
+                    //Debug.Log("hit point : " + hit.point + ", distance : " + hit.distance + ", name : " + hit.collider.name);
+                    Debug.DrawRay(worldPos, (worldPos - CameraController.instance.vcam.transform.position).normalized * hit.distance, Color.red);
+                    //if (controlTarget != -1) allCubes[controlTarget].focused = false;
+                    //hit.collider.GetComponent<Cube>().FocusMe();
+                    UnFocus();
+                    TutorialManager.instance.OnClickPushTutorial();
                     focusChangeCool = 0.3f;
                 }
                 else
@@ -116,7 +132,7 @@ public class CubeController : MonoBehaviour
                         {
                             if (joystick.Horizontal > 0.5f)
                                 joyStickDir = new Vector2(1, 0);
-                            else if(joystick.Horizontal < -0.5f)
+                            else if (joystick.Horizontal < -0.5f)
                                 joyStickDir = new Vector2(-1, 0);
                         }
 
@@ -226,9 +242,10 @@ public class CubeController : MonoBehaviour
         if (cubeMoving || cubeMixing) yield break;
         cubeMixing = true;
         UnFocus();
-        
+
         yield return StartCoroutine(CameraController.instance.ResetMapRotation());
 
+        cleared = false;
         do
         {
             for (int i = 0; i < allCubes.Length; i++)
@@ -250,6 +267,25 @@ public class CubeController : MonoBehaviour
         controlTarget = -1;*/
         cubeMixing = false;
     }
+
+    public void PuzzleCleared()
+    {
+        float clearSnow = 0;
+        if (allCubes[0].transform.position.x == 0 && allCubes[0].transform.position.z == 0)
+            clearSnow = SnowManager.instance.addSnowAmountPerClear * 1.5f;
+        else
+            clearSnow = SnowManager.instance.addSnowAmountPerClear;
+
+        clearScore.text = "+" + clearSnow.ToString();
+
+        clearScoreAnimator.transform.position = new Vector3(allCubes[0].transform.position.x, clearScoreAnimator.transform.position.y, allCubes[0].transform.position.z);
+        clearScoreAnimator.SetTrigger("cleared");
+
+        SnowManager.instance.GetSnow(clearSnow);
+        //UnFocus();
+        cleared = true;
+    }
+
     /*
     IEnumerator MixCube(Cube cube, int mixDir)
     {
