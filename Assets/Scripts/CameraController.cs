@@ -130,5 +130,10 @@ public class CameraController : MonoBehaviour
             }
         }
         map.rotation = Quaternion.Euler(0, 0, 0);
+        
+        if (Mathf.Abs(cam.position.y) > 0.5f)
+        {
+            cam.position = new Vector3(-9.797017e-09f, 5.846009f, -9.164584f);
+        }
     }
 }

@@ -210,5 +210,7 @@ public class Cube : MonoBehaviour
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         GetComponent<Rigidbody>().velocity *= 0;
         CubeController.instance.RoundCubesPos();
+        CubeController.instance.pushCount--;
+        CubeController.instance.pushCountText.text = CubeController.instance.pushCount.ToString() + " / 2";
     }
 }

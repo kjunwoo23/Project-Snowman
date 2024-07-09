@@ -25,6 +25,9 @@ public class CubeController : MonoBehaviour
     public Animator clearScoreAnimator;
     public TextMeshProUGUI clearScore;
 
+    public int pushCount;
+    public TextMeshProUGUI pushCountText;
+
     private void Awake()
     {
         instance = this;
@@ -265,6 +268,10 @@ public class CubeController : MonoBehaviour
                 yield return StartCoroutine(MixCube(allCubes[i], Random.Range(0, 4)));
             }
         controlTarget = -1;*/
+
+        pushCount = 2;
+        pushCountText.text = pushCount.ToString() + " / 2";
+
         cubeMixing = false;
     }
 
