@@ -28,6 +28,10 @@ public class CubeController : MonoBehaviour
     public int pushCount;
     public TextMeshProUGUI pushCountText;
 
+    public Image checkMark;
+    public TextMeshProUGUI mixGuide;
+    public TextMeshProUGUI tutorialGuide;
+
     private void Awake()
     {
         instance = this;
@@ -242,13 +246,20 @@ public class CubeController : MonoBehaviour
     }
     public IEnumerator MixCubes()
     {
+        if (mixGuide.enabled)
+        {
+            mixGuide.enabled = false;
+            tutorialGuide.enabled = true;
+        }
         if (cubeMoving || cubeMixing) yield break;
         cubeMixing = true;
         UnFocus();
 
         yield return StartCoroutine(CameraController.instance.ResetMapRotation());
+        EffectManager.instance.effectSounds[1].source.Play();
 
         cleared = false;
+        checkMark.enabled = false;
         do
         {
             for (int i = 0; i < allCubes.Length; i++)
@@ -277,19 +288,31 @@ public class CubeController : MonoBehaviour
 
     public void PuzzleCleared()
     {
-        float clearSnow = 0;
+        EffectManager.instance.effectSounds[5].source.Play();
+
+        float clearSnow;
         if (allCubes[0].transform.position.x == 0 && allCubes[0].transform.position.z == 0)
-            clearSnow = SnowManager.instance.addSnowAmountPerClear * 1.5f;
+            clearSnow = SnowManager.instance.addSnowAmountPerClear * SnowManager.instance.centerBonus;
         else
             clearSnow = SnowManager.instance.addSnowAmountPerClear;
 
-        clearScore.text = "+" + clearSnow.ToString();
+        clearSnow *= SnowManager.instance.skinTotalSnowBonus;
+        if (pushCount < 0)
+            clearSnow *= Mathf.Pow(0.5f, -pushCount);
+
+        if (clearSnow < 1000 * 10)
+            clearScore.text = "+" + Mathf.Round(clearSnow).ToString();
+        else if (clearSnow < 1000 * 1000 * 10)
+            clearScore.text = "+" + Mathf.Floor(clearSnow / 1000).ToString() + "K";
+        else
+            clearScore.text = "+" + Mathf.Floor(clearSnow / 1000 / 1000).ToString() + "M";
 
         clearScoreAnimator.transform.position = new Vector3(allCubes[0].transform.position.x, clearScoreAnimator.transform.position.y, allCubes[0].transform.position.z);
         clearScoreAnimator.SetTrigger("cleared");
 
         SnowManager.instance.GetSnow(clearSnow);
         //UnFocus();
+        checkMark.enabled = true;
         cleared = true;
     }
 

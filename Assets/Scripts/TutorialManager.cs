@@ -25,6 +25,8 @@ public class TutorialManager : MonoBehaviour
 
     public void OnClickMainTutorial()
     {
+        if (CubeController.instance.tutorialGuide.enabled) CubeController.instance.tutorialGuide.enabled = false;
+        EffectManager.instance.effectSounds[6].source.Play();
         MenuManager.instance.OnClickElse();
         if (!tutorialAnimator.GetBool("mainAppear"))
             tutorialAnimator.SetBool("mainAppear", true);
@@ -32,6 +34,8 @@ public class TutorialManager : MonoBehaviour
 
     public void OnClickPushTutorial()
     {
+        if (CubeController.instance.tutorialGuide.enabled) CubeController.instance.tutorialGuide.enabled = false;
+        EffectManager.instance.effectSounds[6].source.Play();
         MenuManager.instance.OnClickElse();
         if (!tutorialAnimator.GetBool("pushAppear"))
             tutorialAnimator.SetBool("pushAppear", true);
@@ -39,6 +43,7 @@ public class TutorialManager : MonoBehaviour
 
     public void OnClickTutorialQuit()
     {
+        EffectManager.instance.effectSounds[6].source.Play();
         if (tutorialAnimator.GetBool("mainAppear"))
             tutorialAnimator.SetBool("mainAppear", false);
         if (tutorialAnimator.GetBool("pushAppear"))

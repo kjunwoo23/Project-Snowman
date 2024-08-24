@@ -48,6 +48,7 @@ public class Cube : MonoBehaviour
             yield break;
         }
 
+        EffectManager.instance.effectSounds[2].source.Play();
 
         //CubeController.instance.RoundCubesPos();
         Transform rotateAxis = null;
@@ -202,6 +203,11 @@ public class Cube : MonoBehaviour
 
     IEnumerator PushCube()
     {
+        if (CubeController.instance.pushCount > 0)
+            EffectManager.instance.effectSounds[3].source.Play();
+        else
+            EffectManager.instance.effectSounds[4].source.Play();
+
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionZ
             | RigidbodyConstraints.FreezeRotation;
         GetComponent<Rigidbody>().AddForce(400, 0, 0);
