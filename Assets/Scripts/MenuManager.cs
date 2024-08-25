@@ -17,7 +17,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -33,6 +33,9 @@ public class MenuManager : MonoBehaviour
             menuAnimator.SetBool("appear", true);
         else
             menuAnimator.SetBool("appear", false);
+
+        if (CubeController.instance.skinGuide.enabled)
+            CubeController.instance.skinGuide.enabled = false;
     }
     public void OnClickElse()
     {

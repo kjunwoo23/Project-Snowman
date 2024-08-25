@@ -31,6 +31,7 @@ public class CubeController : MonoBehaviour
     public Image checkMark;
     public TextMeshProUGUI mixGuide;
     public TextMeshProUGUI tutorialGuide;
+    public TextMeshProUGUI skinGuide;
 
     private void Awake()
     {
@@ -312,6 +313,12 @@ public class CubeController : MonoBehaviour
 
         SnowManager.instance.GetSnow(clearSnow);
         //UnFocus();
+        if (!PlayerPrefs.HasKey("skinGuide"))
+        {
+            PlayerPrefs.SetInt("skinGuide", 1);
+            skinGuide.enabled = true;
+        }
+
         checkMark.enabled = true;
         cleared = true;
     }
