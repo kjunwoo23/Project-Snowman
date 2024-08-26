@@ -33,6 +33,9 @@ public class CubeController : MonoBehaviour
     public TextMeshProUGUI tutorialGuide;
     public TextMeshProUGUI skinGuide;
 
+    public RawImage upButton;
+    bool right, left, up, down;
+
     private void Awake()
     {
         instance = this;
@@ -59,7 +62,7 @@ public class CubeController : MonoBehaviour
         //Debug.DrawRay(new Vector3(joystickImage.rectTransform.position.x, Screen.height * 0.4f), CameraController.instance.map.right * 1000, Color.blue);
 
         if (focusChangeCool < 0)
-            if (Input.touchCount == 1 && !CameraController.instance.drag && Input.GetTouch(0).position.y > Screen.height * 0.3f)
+            if (Input.touchCount == 1 && !CameraController.instance.drag && Input.GetTouch(0).position.y > upButton.transform.position.y + 128 * 0.7f)
             {
                 //Debug.Log(Input.GetTouch(0).position.y + ", " + joystickImage.rectTransform.rect.height);
                 Vector3 touchPos = Input.GetTouch(0).position;
@@ -127,7 +130,7 @@ public class CubeController : MonoBehaviour
                     //Debug.Log(joystick.Direction);
 
                     //Debug.Log(joystick.Vertical + ", " + joystick.Horizontal);
-
+                    /*
                     if (joystick.Direction != Vector2.zero)
                         if (Mathf.Abs(joystick.Vertical) > Mathf.Abs(joystick.Horizontal))
                         {
@@ -144,28 +147,73 @@ public class CubeController : MonoBehaviour
                                 joyStickDir = new Vector2(-1, 0);
                         }
 
-                    /*
-                    for (int i = 0; i < allCubes.Length; i++)
-                        if (i != controlTarget)
-                            if (Mathf.Abs(allCubes[i].transform.position.x - (allCubes[controlTarget].transform.position.x + joyStickDir.x)) < 0.2f
-                            && Mathf.Abs(allCubes[i].transform.position.y - allCubes[controlTarget].transform.position.y) < 0.2f
-                            && Mathf.Abs(allCubes[i].transform.position.z - (allCubes[controlTarget].transform.position.z + joyStickDir.y)) < 0.2f)
-                            {
-                                up = true;
-                                break;
-                            }
-                    if (Mathf.Abs(allCubes[controlTarget].transform.position.x + joyStickDir.x) > 2.5f
-                        || Mathf.Abs(allCubes[controlTarget].transform.position.z + joyStickDir.y) > 2.5f)
-                        blocked = true;*/
-
                     if (joyStickDir != Vector2.zero)
                     {
                         cubeMoving = true;
                         allCubes[controlTarget].StartMoveCube(joyStickDir);
+                    }*/
+
+
+                    if (right || left || up || down)
+                    {
+                        if (!left && !up && !down)
+                        {
+                            cubeMoving = true;
+                            allCubes[controlTarget].StartMoveCube(new Vector2(1, 0));
+                        }
+                        else if (!right && !up && !down)
+                        {
+                            cubeMoving = true;
+                            allCubes[controlTarget].StartMoveCube(new Vector2(-1, 0));
+                        }
+                        else if (!right && !left && !down)
+                        {
+                            cubeMoving = true;
+                            allCubes[controlTarget].StartMoveCube(new Vector2(0, 1));
+                        }
+                        else if (!right && !left && !up)
+                        {
+                            cubeMoving = true;
+                            allCubes[controlTarget].StartMoveCube(new Vector2(0, -1));
+                        }
                     }
                 }
             }
     }
+
+    public void PointerDownRight()
+    {
+        right = true;
+    }
+    public void PointerUpRight()
+    {
+        right = false;
+    }
+    public void PointerDownLeft()
+    {
+        left = true;
+    }
+    public void PointerUpLeft()
+    {
+        left = false;
+    }
+    public void PointerDownUp()
+    {
+        up = true;
+    }
+    public void PointerUpUp()
+    {
+        up = false;
+    }
+    public void PointerDownDown()
+    {
+        down = true;
+    }
+    public void PointerUpDown()
+    {
+        down = false;
+    }
+
     void UnFocus()
     {
         if (controlTarget == -1) return;
