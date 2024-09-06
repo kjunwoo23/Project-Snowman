@@ -212,9 +212,9 @@ public class Cube : MonoBehaviour
             | RigidbodyConstraints.FreezeRotation;
         GetComponent<Rigidbody>().AddForce(400, 0, 0);
         while (transform.position.x < -1.5f) yield return null;
-        while (transform.position.x < -1 && GetComponent<Rigidbody>().velocity.x > 0.05f) yield return null;
+        while (transform.position.x < -1 && GetComponent<Rigidbody>().linearVelocity.x > 0.05f) yield return null;
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-        GetComponent<Rigidbody>().velocity *= 0;
+        GetComponent<Rigidbody>().linearVelocity *= 0;
         CubeController.instance.RoundCubesPos();
         CubeController.instance.pushCount--;
         CubeController.instance.pushCountText.text = CubeController.instance.pushCount.ToString() + " / 2";
